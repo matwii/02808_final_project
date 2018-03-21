@@ -5,7 +5,8 @@ import { Ionicons } from '@expo/vector-icons';
 import {
     Profile,
     Schedule,
-    Visualization
+    Visualization,
+    AddExercise
 } from '../screens'
 
 /**
@@ -15,16 +16,32 @@ export const MainNavigator = TabNavigator(
     {
         //Name of the screen
         Schedule: {
-            //Screen component
-            screen: Schedule,
-            //Options for the screen
+           screen: StackNavigator({
+               scheduleScreen: {
+                   //Screen component
+                   screen: Schedule,
+                   //Options for the screen
+                   navigationOptions: {
+                       headerTitle: "Schedule",
+                   }
+               },
+               addExerciseScreen: {
+                   //Screen component
+                   screen: AddExercise,
+                   //Options for the screen
+                   navigationOptions: {
+                       headerTitle: "Add new Exercise",
+                   }
+               }
+           }),
             navigationOptions: {
                 //Sets the icon of the tab and the tintcolor when it's activated
-                tabBarIcon: ({ tintColor }) => <Ionicons name={"ios-calendar-outline"} size={32} color={tintColor}/>,
+                tabBarIcon: ({tintColor}) => <Ionicons name={"ios-calendar-outline"} size={32}
+                                                       color={tintColor}/>,
                 labelStyle: {
                     fontSize: 16
-                }
-            }
+                },
+            },
         },
         //Name of the screen
         Profile: {
@@ -57,5 +74,6 @@ export const MainNavigator = TabNavigator(
         tabBarPosition: "bottom",
         //Defines the look of the tabbar, this is the iOs default tabbar
         tabBarComponent: TabBarBottom,
+        initialRouteName: 'Profile',
     }
 );
