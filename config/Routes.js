@@ -6,7 +6,8 @@ import {
     Profile,
     Schedule,
     Visualization,
-    AddExercise
+    AddExercise,
+    AddHydration
 } from '../screens'
 
 /**
@@ -45,16 +46,30 @@ export const MainNavigator = TabNavigator(
         },
         //Name of the screen
         Profile: {
-            //Screen component
-            screen: Profile,
-            //Options for the screen
-            navigationOptions: {
-                //Sets the icon of the tab and the tintcolor when it's activated
-                tabBarIcon: ({ tintColor }) => <Ionicons name={"ios-person-outline"} size={32} color={tintColor}/>,
-                labelStyle: {
-                    fontSize: 16
+            screen: StackNavigator({
+                profileScreen: {
+                    screen: Profile,
+                    //Options for the screen
+                    navigationOptions: {
+                        headerTitle: "Hydration Planner",
+                    }
+                },
+                addHydrationScreen: {
+                    screen: AddHydration,
+                    //Options for the screen
+                    navigationOptions: {
+                        headerTitle: "Add Hydration",
+                    }
+                },
+            }, {
+                navigationOptions: {
+                    //Sets the icon of the tab and the tintcolor when it's activated
+                    tabBarIcon: ({ tintColor }) => <Ionicons name={"ios-person-outline"} size={32} color={tintColor}/>,
+                    labelStyle: {
+                        fontSize: 16
+                    },
                 }
-            }
+            }),
         },
         //Name of the screen
         Visualization: {

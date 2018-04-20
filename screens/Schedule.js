@@ -1,35 +1,48 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import {StyleSheet, Text, View, AsyncStorage} from 'react-native';
 import {Agenda} from 'react-native-calendars';
-import { Ionicons } from '@expo/vector-icons';
+import {Ionicons} from '@expo/vector-icons';
+import { connect } from "react-redux";
+import * as actions from "../actions";
+import moment from 'moment'
 
 class Schedule extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             items: {}
-        };
+        }
     }
 
-    componentDidMount(){
+    async componentWillMount() {
+        await this.props.getObjects();
+        this.props.objects ? this.setState({ items: this.props.objects }) : null
+    }
+
+    componentDidMount() {
         this.props.navigation.setParams({
             navigate: this.onPress,
         });
     }
 
-    static navigationOptions = ({ navigation, state }) => ({
+    componentWillReceiveProps(nextProps){
+        console.log('RECIEVEPROPS')
+        nextProps.objects ? this.setState({ items: nextProps.objects }) : null
+    }
+
+    static navigationOptions = ({navigation, state}) => ({
         headerRight: (
             <Ionicons.Button
                 name={"ios-add"}
                 size={42}
-                onPress={() =>  navigation.state.params.navigate()}
+                onPress={() => navigation.state.params.navigate()}
                 backgroundColor={'transparent'}
                 color={'black'}
             />)
     });
 
     onPress = () => {
-        const { navigate } = this.props.navigation;
+        const {navigate} = this.props.navigation;
         navigate('addExerciseScreen')
     };
 
@@ -65,18 +78,13 @@ class Schedule extends React.Component {
                 const strTime = this.timeToString(time);
                 if (!this.state.items[strTime]) {
                     this.state.items[strTime] = [];
-                    const numItems = Math.floor(Math.random() * 5);
-                    for (let j = 0; j < numItems; j++) {
-                        this.state.items[strTime].push({
-                            name: 'Item for ' + strTime,
-                            height: Math.max(50, 50)
-                        });
-                    }
+                    const numItems = 0;
                 }
             }
-            //console.log(this.state.items);
             const newItems = {};
-            Object.keys(this.state.items).forEach(key => {newItems[key] = this.state.items[key];});
+            Object.keys(this.state.items).forEach(key => {
+                newItems[key] = this.state.items[key];
+            });
             this.setState({
                 items: newItems
             });
@@ -86,7 +94,11 @@ class Schedule extends React.Component {
 
     renderItem(item) {
         return (
-            <View style={[styles.item, {height: item.height}]}><Text>{item.name}</Text></View>
+            <View style={[styles.item, {height: Math.max(50, 50)}]}><Text>
+                {item.activityName}{"\n"}
+                {moment(item.startTime).format('LT')} - {moment(item.endTime).format('LT')}
+
+                </Text></View>
         );
     }
 
@@ -117,9 +129,13 @@ const styles = StyleSheet.create({
     },
     emptyDate: {
         height: 15,
-        flex:1,
+        flex: 1,
         paddingTop: 30
     }
 });
 
-export default Schedule;
+function mapStateToProps({ objects }) {
+    return { objects };
+}
+
+export default connect(mapStateToProps, actions)(Schedule);
