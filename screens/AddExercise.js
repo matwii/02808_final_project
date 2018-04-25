@@ -17,7 +17,8 @@ const User = t.struct({
     date: t.Date,
     startTime: t.Date,
     endTime: t.Date,
-    repeatEachWeek: t.Boolean
+    repeatEachWeek: t.Boolean,
+    rating: t.maybe(t.String)
 });
 
 class AddExercise extends React.Component {
@@ -42,7 +43,8 @@ class AddExercise extends React.Component {
     };
 
     handleSubmit = () => {
-        const value = this._form.getValue(); // use that ref to get the form value
+        let value = this._form.getValue(); // use that ref to get the form value
+        console.log(value);
         if (value !== null){
             const { exercises } = this.state;
             if (!exercises[this.timeToString(value.date)]){
@@ -75,6 +77,7 @@ class AddExercise extends React.Component {
             <ScrollView style={styles.container}>
                 <Form
                     type={User}
+                    value={{rating: null}}
                     options={createOptions}
                     ref={c => this._form = c} // assign a ref
                 />
@@ -127,6 +130,9 @@ const createOptions = {
         },
         repeatEachWeek: {
             label: 'Repeat each week?',
+        },
+        rating: {
+            hidden: true
         }
     }
 };

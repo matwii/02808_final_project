@@ -13,14 +13,10 @@ export default class App extends React.Component {
         super(props);
     }
 
-    componentWillMount(){
-    }
 
-    async registerForPushNotificationsAsync() {
-        const { status } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
-        console.log(status);
+    getPushNotification = async () => {
 
-        /*const { status: existingStatus } = await Permissions.getAsync(
+        const { status: existingStatus } = await Permissions.getAsync(
             Permissions.NOTIFICATIONS
         );
         let finalStatus = existingStatus;
@@ -42,13 +38,13 @@ export default class App extends React.Component {
         // Get the token that uniquely identifies this device
         let token = await Notifications.getExpoPushTokenAsync();
 
-        console.log(token);*/
+        console.log(token);
     }
 
     render() {
-        this.registerForPushNotificationsAsync();
-        this.notificationSubscription = Notifications.addListener(this.registerForPushNotificationsAsync);
-        //AsyncStorage.clear();
+        this.getPushNotification();
+        this.notificationSubscription = Notifications.addListener(this.getPushNotification);
+        AsyncStorage.clear();
         moment.locale('en-gb');
         return (
             <Provider store={store}>

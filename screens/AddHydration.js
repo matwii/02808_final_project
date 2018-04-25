@@ -1,8 +1,9 @@
 import React from 'react';
-import { StyleSheet, Image, View, Dimensions, Text, AsyncStorage } from 'react-native';
+import { StyleSheet, Image, View, Dimensions, Text, AsyncStorage, TextInput } from 'react-native';
 import { Card, ListItem, Button, ButtonGroup } from 'react-native-elements'
 import { connect } from "react-redux";
 import * as actions from "../actions";
+import { ConnectAlert } from '../components/alert';
 import moment from "moment/moment";
 
 const DIMENSIONS = {
@@ -15,18 +16,63 @@ class AddHydration extends React.Component {
         super(props);
 
         this.state = {
-            selectedIndex: 0
+            selectedIndex: 0,
+            text: 0,
+            exercises: {}
         };
     }
+
+    async componentDidMount() {
+        try {
+            const value = await AsyncStorage.getItem('hydration');
+            console.log(value)
+            if (value !== null){
+                // We have data!!
+                this.setState({exercises: JSON.parse(value)});
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     updateIndex = (selectedIndex) => {
         this.setState({selectedIndex})
     };
 
-    onPress = () => {
+    onPress = (value) => {
+        let tempValue = this.state.text += value;
+        console.log('tmpvalue:' + tempValue);
+        this.setState({text: tempValue});
+    };
+
+    onSave = () => {
+        if (this.state.text !== 0){
+            const { exercises, text } = this.state;
+            if (!exercises[this.timeToString(new Date())]){
+                exercises[this.timeToString(new Date())] = [{hydration: text}];
+                return AsyncStorage.setItem('hydration', JSON.stringify(exercises))
+                    .then(this.props.alertWithType("success", "Exercise added", "Exercise successfully added to your schedule"))
+                    .then(this.props.getHydration())
+                    .then(this.props.navigation.goBack())
+                    .catch(error => console.log('error!'));
+            } else {
+                exercises[this.timeToString(new Date())].push({hydration: text});
+                return AsyncStorage.setItem('hydration', JSON.stringify(exercises))
+                    .then(this.props.alertWithType("success", "Exercise added", "Exercise successfully added to your schedule"))
+                    .then(this.props.getHydration())
+                    .then(this.props.navigation.goBack())
+                    .catch(error => console.log('error!'));
+            }
+        } else {
+            return this.props.alertWithType("error", "Need a value", "Value can't be zero")
+        }
 
     };
 
+    timeToString(date) {
+        let string = moment(date).format();
+        return string.split('T')[0];
+    }
 
     render() {
         const buttons = ['Water', 'Energy Drink']
@@ -43,15 +89,39 @@ class AddHydration extends React.Component {
                     selectedButtonStyle={{ backgroundColor: '#1e88e5' }}
                     selectedTextStyle={{ color: 'white' }}
                 />
-                <View>
-                    <Text>Test</Text>
-                    <Text>Test</Text>
+                <View style={{alignItems: 'center'}}>
+                    <TextInput
+                        keyboardType='numeric'
+                        style={{height: 40, width: 70, borderBottomWidth : 1, borderBottomColor: '#1e88e5', margin: 5}}
+                        onChangeText={(text) => text ? this.setState({text: parseInt(text)}) : this.setState({text: 0})}
+                        value={this.state.text.toString()}
+                    />
+                    <View style={{flexDirection: 'row', margin: 5}}>
+                        <Button
+                            fontSize={10}
+                            buttonStyle={styles.addWaterButtonStyle}
+                            color='black'
+                            onPress={() => this.onPress(250)}
+                            title='+250 ml' />
+                        <Button
+                            fontSize={10}
+                            buttonStyle={styles.addWaterButtonStyle}
+                            color='black'
+                            onPress={() => this.onPress(500)}
+                            title='+500 ml' />
+                        <Button
+                            fontSize={10}
+                            buttonStyle={styles.addWaterButtonStyle}
+                            color='black'
+                            onPress={() => this.onPress(1000)}
+                            title='+1000 ml' />
+                    </View>
                 </View>
                 <Button
                     title='Save'
                     rounded
                     backgroundColor='#1e88e5'
-                    onPress={() => this.onPress()}
+                    onPress={() => this.onSave()}
                     containerViewStyle={{alignSelf: 'stretch', paddingRight: 10, paddingLeft: 10, marginBottom: 20}}
                 />
             </View>
@@ -72,10 +142,13 @@ const styles = StyleSheet.create({
         margin: 10,
         alignSelf: 'stretch'
     },
+    addWaterButtonStyle: {
+        borderColor: '#1e88e5', backgroundColor: 'white', borderWidth: 1
+    }
 });
 
-function mapStateToProps({ objects }) {
-    return { objects };
+function mapStateToProps({ hydration }) {
+    return { hydration };
 }
 
-export default connect(mapStateToProps, actions)(AddHydration);
+export default connect(mapStateToProps, actions)(ConnectAlert(AddHydration));
