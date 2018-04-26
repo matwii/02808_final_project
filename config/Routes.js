@@ -65,7 +65,7 @@ export const MainNavigator = TabNavigator(
                 addRatingScreen: {
                     screen: AddRating,
                     navigationOptions: {
-                        headerTitle: 'Add Rating'
+                        headerTitle: 'Choose your rating of the exercise'
                     }
                 }
             }, {

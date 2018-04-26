@@ -33,6 +33,21 @@ class AddRating extends React.Component {
         }
     };
 
+    onPress = (rating) => {
+        let { exercises } = this.state;
+        exercises[this.timeToString(new Date())][this.props.navigation.state.params.index].rating = rating;
+        return AsyncStorage.setItem('exercises', JSON.stringify(exercises))
+            .then(this.props.alertWithType("success", "Rating set", "Successfully rated the exercise"))
+            .then(this.props.getObjects())
+            .then(this.props.navigation.goBack())
+            .catch(error => console.log('error!'));
+    };
+
+    timeToString(date) {
+        let string = moment(date).format();
+        return string.split('T')[0];
+    }
+
      render() {
 
         return (
@@ -41,16 +56,19 @@ class AddRating extends React.Component {
                     name={"frown-o"}
                     size={80}
                     color='#1e88e5'
-                />
-                <FontAwesome
-                    name={"smile-o"}
-                    size={80}
-                    color='#1e88e5'
+                    onPress={() => this.onPress('frown-o')}
                 />
                 <FontAwesome
                     name={"meh-o"}
                     size={80}
                     color='#1e88e5'
+                    onPress={() => this.onPress('meh-o')}
+                />
+                <FontAwesome
+                    name={"smile-o"}
+                    size={80}
+                    color='#1e88e5'
+                    onPress={() => this.onPress('smile-o')}
                 />
             </View>
         );

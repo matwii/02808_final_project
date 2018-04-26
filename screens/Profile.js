@@ -4,6 +4,7 @@ import {Card, ListItem, Button} from 'react-native-elements'
 import {connect} from "react-redux";
 import * as actions from "../actions";
 import moment from 'moment'
+import {FontAwesome} from '@expo/vector-icons';
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 
 const DIMENSIONS = {
@@ -17,7 +18,7 @@ class Profile extends React.Component {
 
         this.state = {
             todayExercises: [],
-            todaysHydration: {}
+            todaysHydration: {},
         }
     }
 
@@ -73,28 +74,101 @@ class Profile extends React.Component {
         return string.split('T')[0];
     }
 
-    _renderItem({item, index}) {
+    _renderItem = ({item, index}) => {
+        const start = moment(item.startTime);
+        const end = moment(item.endTime);
+        const diffMin = end.diff(start, 'minutes');
         return (
             <Card
-                containerStyle={styles.container3}
-                title="Today's Goal ">
-                <Text>Inser value here</Text>
+                containerStyle={styles.container2}
+                wrapperStyle={{justifyContent: 'space-between'}}
+                title="Today's Goal">
+                <View style={{justifyContent: 'space-between',}}>
+                    <Text style={{fontSize: 16, alignSelf: 'center'}}>{item.activityName}</Text>
+                    <View style={{flexDirection: 'row', alignSelf: 'center', marginBottom: 10}}>
+                        <Text style={{fontSize: 16, alignSelf: 'center'}}>{diffMin}</Text>
+                        <Text style={{marginTop: 4}}> mins</Text>
+                    </View>
+                    {this.renderRating(index, item)}
+                </View>
             </Card>
         )
     }
 
-    _renderCarousel(){
-        const { todayExercises } = this.state;
-        if (todayExercises.length === 0){
+
+    renderRating(index, todayExercise) {
+        console.log('index:' + index + 'todayExercise:' + todayExercise);
+        if (todayExercise.rating) {
+            return (
+                <View>
+                    <Text style={{alignSelf: 'center'}}>Rating:</Text>
+                    {this.renderIcon(todayExercise.rating)}
+                </View>
+            )
+        }
+        return (
+            <View>
+                <Text style={{alignSelf: 'center'}}>Starts from:</Text>
+                <Text style={{
+                    fontSize: 16,
+                    alignSelf: 'center',
+                    marginBottom: 10
+                }}>{moment(todayExercise.startTime).format('LT')}</Text>
+                <Button
+                    title='+ Rate session'
+                    rounded
+                    backgroundColor='#1e88e5'
+                    onPress={() => this.props.navigation.navigate('addRatingScreen', {index: index})}
+                />
+            </View>
+        )
+    }
+
+    renderIcon(rating) {
+        if (rating === 'smile-o') {
+            return (
+                <FontAwesome
+                    name={"smile-o"}
+                    size={50}
+                    color='#1e88e5'
+                    style={{alignSelf: 'center'}}
+                />
+            )
+        }
+        if (rating === 'meh-o') {
+            return (
+                <FontAwesome
+                    name={"meh-o"}
+                    size={50}
+                    color='#1e88e5'
+                    style={{alignSelf: 'center'}}
+                />
+            )
+        }
+        if (rating === 'frown-o') {
+            return (
+                <FontAwesome
+                    name={"frown-o"}
+                    size={50}
+                    color='#1e88e5'
+                    style={{alignSelf: 'center'}}
+                />
+            )
+        }
+    }
+
+    _renderCarousel() {
+        const {todayExercises} = this.state;
+        if (todayExercises.length === 0) {
             return (
                 <Card
                     containerStyle={styles.container2}
-                    title="Today's Goal ">
+                    title="Today's Goal">
                     <Text style={{fontSize: 18, alignSelf: 'center'}}>No Exercise Today</Text>
                 </Card>
             )
         }
-        if (todayExercises.length === 1){
+        if (todayExercises.length === 1) {
             const start = moment(todayExercises[0].startTime);
             const end = moment(todayExercises[0].endTime);
             const diffMin = end.diff(start, 'minutes');
@@ -102,21 +176,14 @@ class Profile extends React.Component {
                 <Card
                     containerStyle={styles.container2}
                     wrapperStyle={{justifyContent: 'space-between'}}
-                    title="Today's Goal ">
+                    title="Today's Goal">
                     <View style={{justifyContent: 'space-between',}}>
                         <Text style={{fontSize: 16, alignSelf: 'center'}}>{todayExercises[0].activityName}</Text>
                         <View style={{flexDirection: 'row', alignSelf: 'center', marginBottom: 10}}>
-                            <Text style={{fontSize: 16, alignSelf: 'center'}}>{diffMin + 1}</Text>
+                            <Text style={{fontSize: 16, alignSelf: 'center'}}>{diffMin}</Text>
                             <Text style={{marginTop: 4}}> mins</Text>
                         </View>
-                        <Text style={{alignSelf: 'center'}}>Starts from:</Text>
-                        <Text style={{fontSize: 16, alignSelf: 'center', marginBottom: 10}}>{moment(todayExercises[0].startTime).format('LT')}</Text>
-                        <Button
-                            title='+ Rate session'
-                            rounded
-                            backgroundColor='#1e88e5'
-                            onPress={() => this.props.navigation.navigate('addRatingScreen', {index: 0})}
-                        />
+                        {this.renderRating(0, todayExercises[0])}
                     </View>
                 </Card>
             )
