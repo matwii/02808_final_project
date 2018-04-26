@@ -51,14 +51,14 @@ class AddHydration extends React.Component {
             if (!exercises[this.timeToString(new Date())]){
                 exercises[this.timeToString(new Date())] = [{hydration: text}];
                 return AsyncStorage.setItem('hydration', JSON.stringify(exercises))
-                    .then(this.props.alertWithType("success", "Exercise added", "Exercise successfully added to your schedule"))
+                    .then(this.props.alertWithType("success", "Hydration stored", "Hydration successfully stored"))
                     .then(this.props.getHydration())
                     .then(this.props.navigation.goBack())
                     .catch(error => console.log('error!'));
             } else {
                 exercises[this.timeToString(new Date())].push({hydration: text});
                 return AsyncStorage.setItem('hydration', JSON.stringify(exercises))
-                    .then(this.props.alertWithType("success", "Exercise added", "Exercise successfully added to your schedule"))
+                    .then(this.props.alertWithType("success", "Hydration stored", "Hydration successfully stored"))
                     .then(this.props.getHydration())
                     .then(this.props.navigation.goBack())
                     .catch(error => console.log('error!'));

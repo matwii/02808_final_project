@@ -44,7 +44,7 @@ export default class App extends React.Component {
     render() {
         this.getPushNotification();
         this.notificationSubscription = Notifications.addListener(this.getPushNotification);
-        AsyncStorage.clear();
+        //AsyncStorage.clear();
         moment.locale('en-gb');
         return (
             <Provider store={store}>

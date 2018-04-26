@@ -7,7 +7,8 @@ import {
     Schedule,
     Visualization,
     AddExercise,
-    AddHydration
+    AddHydration,
+    AddRating
 } from '../screens'
 
 /**
@@ -61,6 +62,12 @@ export const MainNavigator = TabNavigator(
                         headerTitle: "Add Hydration",
                     }
                 },
+                addRatingScreen: {
+                    screen: AddRating,
+                    navigationOptions: {
+                        headerTitle: 'Add Rating'
+                    }
+                }
             }, {
                 navigationOptions: {
                     //Sets the icon of the tab and the tintcolor when it's activated
@@ -90,5 +97,6 @@ export const MainNavigator = TabNavigator(
         //Defines the look of the tabbar, this is the iOs default tabbar
         tabBarComponent: TabBarBottom,
         initialRouteName: 'Profile',
+        swipeEnabled: false,
     }
 );

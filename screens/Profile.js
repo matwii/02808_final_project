@@ -4,6 +4,7 @@ import {Card, ListItem, Button} from 'react-native-elements'
 import {connect} from "react-redux";
 import * as actions from "../actions";
 import moment from 'moment'
+import Carousel, {Pagination} from 'react-native-snap-carousel';
 
 const DIMENSIONS = {
     WIDTH: Dimensions.get('window').width,
@@ -15,7 +16,7 @@ class Profile extends React.Component {
         super(props);
 
         this.state = {
-            todayExercises: {},
+            todayExercises: [],
             todaysHydration: {}
         }
     }
@@ -28,37 +29,37 @@ class Profile extends React.Component {
             if (this.props.objects[dateString]) {
                 this.setState({todayExercises: this.props.objects[dateString]});
             }
-        } if (this.props.hydration){
-                if (this.props.hydration[dateString]){
-                    this.setState({ todaysHydration: this.props.hydration[dateString] });
-                }
+        }
+        if (this.props.hydration) {
+            if (this.props.hydration[dateString]) {
+                this.setState({todaysHydration: this.props.hydration[dateString]});
+            }
         } else {
             console.log('no objects')
         }
     }
 
     async componentWillReceiveProps(nextProps) {
-        console.log(nextProps);
         const dateString = this.timeToString(new Date())
-        if (this.props.objects) {
-            if (this.props.objects[dateString]) {
+        if (nextProps.objects) {
+            if (nextProps.objects[dateString]) {
                 this.setState({todayExercises: nextProps.objects[dateString]});
             }
         }
-        if (nextProps.hydration){
-            if (nextProps.hydration[dateString]){
+        if (nextProps.hydration) {
+            if (nextProps.hydration[dateString]) {
                 console.log('nextProps' + nextProps.hydration[dateString]);
-                await this.setState({ todaysHydration: nextProps.hydration[dateString] });
+                await this.setState({todaysHydration: nextProps.hydration[dateString]});
                 this.renderAmountOfWater();
             }
         }
     }
 
     renderAmountOfWater = () => {
-        const { todaysHydration } = this.state;
+        const {todaysHydration} = this.state;
         if (JSON.stringify(todaysHydration) !== '{}') {
             let total = 0;
-            for (let i = 0; i < todaysHydration.length; i++){
+            for (let i = 0; i < todaysHydration.length; i++) {
                 total += todaysHydration[i].hydration;
             }
             console.log('total' + total);
@@ -72,13 +73,72 @@ class Profile extends React.Component {
         return string.split('T')[0];
     }
 
-    render() {
+    _renderItem({item, index}) {
         return (
-            <View style={styles.container}>
+            <Card
+                containerStyle={styles.container3}
+                title="Today's Goal ">
+                <Text>Inser value here</Text>
+            </Card>
+        )
+    }
+
+    _renderCarousel(){
+        const { todayExercises } = this.state;
+        if (todayExercises.length === 0){
+            return (
                 <Card
                     containerStyle={styles.container2}
                     title="Today's Goal ">
+                    <Text style={{fontSize: 18, alignSelf: 'center'}}>No Exercise Today</Text>
                 </Card>
+            )
+        }
+        if (todayExercises.length === 1){
+            const start = moment(todayExercises[0].startTime);
+            const end = moment(todayExercises[0].endTime);
+            const diffMin = end.diff(start, 'minutes');
+            return (
+                <Card
+                    containerStyle={styles.container2}
+                    wrapperStyle={{justifyContent: 'space-between'}}
+                    title="Today's Goal ">
+                    <View style={{justifyContent: 'space-between',}}>
+                        <Text style={{fontSize: 16, alignSelf: 'center'}}>{todayExercises[0].activityName}</Text>
+                        <View style={{flexDirection: 'row', alignSelf: 'center', marginBottom: 10}}>
+                            <Text style={{fontSize: 16, alignSelf: 'center'}}>{diffMin + 1}</Text>
+                            <Text style={{marginTop: 4}}> mins</Text>
+                        </View>
+                        <Text style={{alignSelf: 'center'}}>Starts from:</Text>
+                        <Text style={{fontSize: 16, alignSelf: 'center', marginBottom: 10}}>{moment(todayExercises[0].startTime).format('LT')}</Text>
+                        <Button
+                            title='+ Rate session'
+                            rounded
+                            backgroundColor='#1e88e5'
+                            onPress={() => this.props.navigation.navigate('addRatingScreen', {index: 0})}
+                        />
+                    </View>
+                </Card>
+            )
+        }
+        return (
+            <Carousel
+                ref={(c) => {
+                    this._carousel = c;
+                }}
+                data={todayExercises}
+                renderItem={this._renderItem}
+                sliderWidth={DIMENSIONS.WIDTH}
+                itemWidth={DIMENSIONS.WIDTH / 1.2}
+                layout={'default'}
+            />
+        )
+    }
+
+    render() {
+        return (
+            <View style={styles.container}>
+                {this._renderCarousel()}
                 <Card
                     containerStyle={styles.container2}
                     title="Hydration Condition ">
@@ -120,7 +180,15 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'white',
         margin: 10,
-        alignSelf: 'stretch'
+        alignSelf: 'center',
+        width: DIMENSIONS.WIDTH / 1.1
+    },
+    container3: {
+        flex: 1,
+        backgroundColor: 'white',
+        margin: 10,
+        alignSelf: 'center',
+        width: DIMENSIONS.WIDTH / 1.2
     },
 });
 
