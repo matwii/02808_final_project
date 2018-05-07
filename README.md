@@ -20,3 +20,4 @@ To install the app on your device, simply follow these steps:
 * Open your command line again and ``` cd 02808_final_project ```
 * Run ``` npm install ```
 * Run ``` exp start ```
+* Download the [Expo](https://itunes.apple.com/us/app/expo-client/id982107779?mt=8) client on your iOs device and log in to your Expo user. You should now be able to open the project.
