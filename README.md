@@ -16,3 +16,7 @@ To install the app on your device, simply follow these steps:
 * Make sure you have [Node](https://nodejs.org/en/) or npm installed on your computer 
 * Register a user on [Expo](https://expo.io/).
 * Open your command line and run this code ```npm install exp --global```
+* Do a git pull on this project
+* Open your command line again and ``` cd 02808_final_project ```
+* Run ``` npm install ```
+* Run ``` exp start ```
