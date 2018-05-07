@@ -14,3 +14,5 @@ To install the app on your device, simply follow these steps:
 
 ### Install on iOs
 * Make sure you have [Node](https://nodejs.org/en/) or npm installed on your computer 
+* Register a user on [Expo] (https://expo.io/).
+* Open your command line and run this code ```npm install exp --global```
