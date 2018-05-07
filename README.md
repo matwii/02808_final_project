@@ -5,8 +5,8 @@ This app is the app we used for the final project in the course 02808-Personal D
 The app is made by Matz-Leander Solheim Wiik and Fei Xie.
 
 ## Installation Instructions
-![picture](qr.PNG)
 To install the app on your device, simply follow these steps:
 ### Install on Android
 * Install [Expo](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en_US) on your Android device.
 * Open the Expo app and scan this QR code above when prompted. 
+![picture](qr.PNG)
