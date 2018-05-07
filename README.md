@@ -8,3 +8,4 @@ The app is made by Matz-Leander Solheim Wiik and Fei Xie.
 To install the app on your device, simply follow these steps:
 ### Install on Android
 * Install [Expo](https://play.google.com/store/apps/details?id=host.exp.exponent&hl=en_US) on your Android device.
+* Open the Expo app and scan this QR code when prompted ![picture](qr.PNG)
